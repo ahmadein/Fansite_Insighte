@@ -13,7 +13,8 @@ replycode = []
 num_lines = 0
 parent_path = Path(__file__).parents[1]
 print('starting to read the file\n')
-file_path = Path.joinpath(parent_path,'log_input/log.txt')
+file_path = Path.joinpath(parent_path,'log_input/log.txt').__str__()
+output_path = Path.joinpath(parent_path,'log_output')
 with open(file_path, encoding="Latin-1") as f:
     for line in f:
         new_param = line.split()
@@ -37,7 +38,8 @@ for k in range(len(unique_inverse)):
 print('starting feature 1\n')
 sort_occ = sorted(occ, reverse=True)
 index = sorted(range(len(occ)), reverse=True, key=lambda z: occ[z])
-with open("hosts.txt", "w") as f:
+file_path1 = Path.joinpath(output_path, 'hosts.txt').__str__()
+with open(file_path1, "w") as f:
     f.writelines(map("{},{}\n".format, unique_host[index[0:10]], sort_occ[0:10]))
 f.close()
 
@@ -54,7 +56,8 @@ sorted_tot_bytes = sorted(tot_bytes.items(), key=operator.itemgetter(1), reverse
 highest_bytes_host = []
 for k in range(highest_bytes_to_print):
     highest_bytes_host.append(unique_host[sorted_tot_bytes[k][0]])
-thefile = open('resources.txt', 'w')
+file_path2 = Path.joinpath(output_path, 'resources.txt').__str__()
+thefile = open(file_path2, 'w')
 for item in highest_bytes_host:
     thefile.write("%s\n" % item)
 thefile.close()
@@ -71,7 +74,8 @@ sorted_hour_dec = sorted(hour_dict.items(), key=operator.itemgetter(1), reverse=
 for k in range(highest_periods_to_print):
     busiest_period.append(sorted_hour_dec[k][0] + ":00:00 -0400")
     occ_period.append(sorted_hour_dec[k][1])
-with open("hours.txt", "w") as f:
+file_path3 = Path.joinpath(output_path, 'hours.txt').__str__()
+with open(file_path3, "w") as f:
     f.writelines(map("{},{}\n".format, busiest_period, occ_period))
 f.close()
 # ### feature 4
@@ -98,7 +102,8 @@ for key, value in index_dict.items():
         blocked_dict[key] = [list(value)[x] for x in unique_index_to_print]
 v = blocked_dict.values()
 v_list = [item for sublist in v for item in sublist]
-fileID = open('blocked.txt', 'w')
+file_path4 = Path.joinpath(output_path, 'blocked.txt').__str__()
+fileID = open(file_path4, 'w')
 for x in v_list:
     print('{:s} - - [{:s} -0400] "{:s}" {:d} {:d}\n'.format(
         host[x], date_in_file[x], request[x], replycode[x], bytes_sent[x]), end='', file=fileID)
