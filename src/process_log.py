@@ -19,25 +19,30 @@ def main(argv):
     bytes_sent = []
     replycode = []
     num_lines = 0
-    parent_path = Path(__file__).parents[1]
-    print('starting to read the file\n')
-    file_path = Path.joinpath(parent_path,'log_input/log.txt').__str__()
-    output_path = Path.joinpath(parent_path,'log_output')
-    with open(file_path, encoding="Latin-1") as f:
-        for line in f:
-            new_param = line.split()
-            quotes = re.findall(r'"[^"]*"', line, re.U)
-            temp = quotes.__str__()
-            request.append(temp[3:-3])
-            host.append(new_param[0])
-            date_in_file.append(new_param[3][1:])
-            replycode.append(new_param[-2])
-            bytes_sent.append(new_param[-1])
-            num_lines = num_lines+1
-    print('finished reading the file\n')
-    if save_date=='True':
-        with open('objs.pickle', 'w') as f:  # Python 3: open(..., 'wb')
-            pickle.dump([obj0, obj1, obj2], f)
+    parent_path = Path(__file__).parents[1]   # get the repo parent's path
+    data_path = Path.joinpath(parent_path, 'data_stored/objs.pickle').__str__()
+    if read_from_file == 'True':
+        print('starting to read the file\n')
+        file_path = Path.joinpath(parent_path,'log_input/log.txt').__str__()
+        output_path = Path.joinpath(parent_path, 'log_output')
+        with open(file_path, encoding="Latin-1") as f:
+            for line in f:
+                new_param = line.split()
+                quotes = re.findall(r'"[^"]*"', line, re.U)
+                temp = quotes.__str__()
+                request.append(temp[3:-3])
+                host.append(new_param[0])
+                date_in_file.append(new_param[3][1:])
+                replycode.append(new_param[-2])
+                bytes_sent.append(new_param[-1])
+                num_lines = num_lines+1
+        print('finished reading the file\n')
+    else:
+        with open(data_path, 'rb') as f:  # Python 3: open(..., 'rb')
+            host, date_in_file, request, replycode, bytes_sent = pickle.load(f)
+    if save_date == 'True':
+        with open(data_path, 'wb') as f:  # Python 3: open(..., 'wb')
+            pickle.dump([host, date_in_file, request, replycode, bytes_sent], f)
     # make a dictionary of indicies
     print('preparation for the features\n')
     unique_host, unique_index, unique_inverse, occ = np.unique(
