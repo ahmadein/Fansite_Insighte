@@ -1,10 +1,10 @@
-/shuttle/missions/sts-71/movies/sts-71-launch.mpg HTTP/1.0
-/ HTTP/1.0
-/shuttle/missions/sts-71/movies/sts-71-tcdt-crew-walkout.mpg HTTP/1.0
+/mdss/ped/acs/SDP.ps HTTP/1.0
+/statistics/1995/Jun/Jun95_reverse_domains.html   HTTP/1.0
 /shuttle/missions/sts-53/movies/sts-53-launch.mpg HTTP/1.0
-/shuttle/countdown/count70.gif HTTP/1.0
-/shuttle/technology/sts-newsref/stsref-toc.html HTTP/1.0
-/shuttle/countdown/video/livevideo2.gif HTTP/1.0
-/shuttle/countdown/count.gif HTTP/1.0
+/statistics/1995/bkup/Jan95_full.html   HTTP/1.0
+/statistics/1995/bkup/Mar95_full.html   HTTP/1.0
+/statistics/1995/Jul/Jul95_reverse_domains.html HTTP/1.0
+/shuttle/missions/sts-70/movies/sts-70-launch-press.mpg
 /shuttle/missions/sts-71/movies/sts-71-hatch-hand-group.mpg
-/shuttle/countdown/video/livevideo.gif HTTP/1.0
+/shuttle/missions/sts-26/movies/sts-26-launch.mpg HTTP/1.0
+/statistics/1995/Jun/Jun95_reverse_domains.html HTTP/1.0

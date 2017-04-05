@@ -1,13 +1,13 @@
 # Table of Contents
-1. [Challenge Summary](README.md#Insight-Fansite)
+1. [Project Summary](README.md#Insight-Fansite)
 2. [Details of Implementation](README.md#details-of-implementation)
-3. [Getting Started](README.md#getting-started)
-4. [Description of Data](README.md#description-of-data)
-5. [Writing clean, scalable, and well-tested code](README.md#writing-clean-scalable-and-well-tested-code)
-6. [Repo directory structure](README.md#repo-directory-structure)
-7. [Testing your directory structure and output format](README.md#testing-your-directory-structure-and-output-format)
-8. [Instructions to submit your solution](README.md#instructions-to-submit-your-solution)
-9. [FAQ](README.md#faq)
+3. [List of Implemented Features ](README.md#list-features)
+4. [Getting Started](README.md#getting-started)
+5. [## Prerequisites](README.md#pre)
+6. [Dependencies](README.md#dep)
+7. [IHow to Run](README.md#run)
+8. [Running the tests](README.md#testing)
+
 
 # Insight Fansite
 
@@ -25,15 +25,39 @@ Finally, features functions are called according to user's choice, or by default
 
 The code runs quick and memory efficient. In less than a minute, it was able to complete processing the provided log of more than four Milion records.
 
+## List of Implemented Features 
+
+### Feature 1: 
+List the top 10 most active host/IP addresses that have accessed the site.
+
+### Feature 2: 
+Identify the 10 resources that consume the most bandwidth on the site
+
+### Feature 3:
+List the top 10 busiest (or most frequently visited) 60-minute periods 
+
+### Feature 4: 
+Detect patterns of three failed login attempts from the same IP address over 20 seconds so that all further attempts to the site can be blocked for 5 minutes. Log those possible security breaches.
+
+In addition, the code provides some flexability and additional advantages
+
+1- ABility to determine the input and output path
+2- Ability of quick reading from a previously parsed file saved in pickle
+3- Fast and quick reading using regex
+4- Fast and quick processing using classes and dictionaries while maintaining memory efficiency
+5- Ability to run subset of features
+
 ## Getting Started
 
 Clone or download the repository. Ensure that the log file exists in the right place or provide the log file path to the code as shown in the section how to run
 
-### Prerequisites
+## Prerequisites
+
 Make Sure you have Python 3 installed and can be called using python command. If the python program needs to be called using python 3 then create an alias or modify the run.sh and run_tests.sh accordingly
 
-### Dependencies
-'''
+## Dependencies
+
+```
 from datetime import datetime
 import operator
 import re
@@ -43,76 +67,33 @@ from pathlib import Path
 import sys
 import pickle
 import argparse
-'''
+```
 
 ### How to Run
 
-A step by step series of examples that tell you have to get a development env running
+You can run the code by calling the code log_process inside the folder ...\src\. This will run the default code which will read a text file called 'log.txt' inside the folder ...\log_input\ and will run all the features. In addition, you can run the code by passing arguments to it which can define some parameters for the code different than the default.
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
+Here are all the possible arguments for the code
 
 ```
-until finished
+-in or --input_file defines the input file path. For example, '...\insight_testsuite\tests\test_features\log_input\log.txt'. The default is '...\log_input\log.txt'
+-out or --output_folder defines the input file path. For example, '...\insight_testsuite\tests\test_features\log_output'. The default is '...\log_output'
+-f or --features defines which features would the user like to run. For example, -f 1 3 will run features 1 and 3 only. The default is to run all features. 
+-s or --save_pickle gives the user the option to save the data parsed from the input file into pickle file to enable quick reading when needed. The defult is False. The pickle file will be stored in '...\data_stored\'
+-r or -- read_pickle gives the user the option to read from a pickle file already saved intead of parsing the entire log file for quick reading. The defult is False. The pickle file is assumed to be stored in '...\data_stored\'
 ```
+Here are some examples
 
-End with an example of getting some data out of the system or using it for a little demo
+```
+python process_log.py .. everything is in default .. read from log in log_input and out in log_output while running all features. No pickle saving nor loading
+python process_log.py -f [1 2 4] will run only features 1, 2 and 4
+pyhon process_log.py -r will not parse the log file but read the variables host, time, request, reply code and bytes directly from a pickle file
+```
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+All tests exist in the run_tests.sh inside ...\insight_testsuite. Additional test cases can be added such as
+1- handling empty files
+2- handling corrupted files
+3- Duplicated Entries
+4- Non existing pickle file

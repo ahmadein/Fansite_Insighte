@@ -24,20 +24,23 @@ class ChallengeInsight:
         self.occ = None
         self.parent_path = Path(__file__).parents[1]  # get the repo parent's path
         self.data_path = Path.joinpath(self.parent_path, 'data_stored/objs.pickle').__str__()
-        if output_path is None:
+        self.file_path=file_path
+        self.output_path=output_path
+        if self.output_path is None:
             self.output_path = Path.joinpath(self.parent_path, 'log_output')
-        if file_path is None:
+        if self.file_path is None:
             self.file_path = Path.joinpath(self.parent_path, 'log_input/log.txt').__str__()
 
 
     def save_pickle(self):
-        with open(data_path, 'wb') as f:  # Python 3: open(..., 'wb')
-            pickle.dump([host, date_in_file, request, replycode, bytes_sent], f)
+        print('storing data in {:s}'.format(self.data_path))
+        with open(self.data_path, 'wb') as f:  # Python 3: open(..., 'wb')
+            pickle.dump([self.host, self.date_in_file, self.request, self.replycode, self.bytes_sent], f)
 
     def read_pickle(self):
         try:
-            print('reading from stored data in {:s}'.format(data_path))
-            with open(data_path, 'rb') as f:  # Python 3: open(..., 'rb')
+            print('reading from stored data in {:s}'.format(self.data_path))
+            with open(self.data_path, 'rb') as f:  # Python 3: open(..., 'rb')
                 self.host, self.date_in_file, self.request, self.replycode, self.bytes_sent = pickle.load(f)
         except:
             print('error while opening file .. exiting')
