@@ -88,6 +88,7 @@ from pathlib import Path
 import sys
 import pickle
 import argparse
+from collections import Counter
 ```
 
 ### How to Run
@@ -104,11 +105,11 @@ Here are all the possible arguments for the code
 -r or -- read_pickle 
 ```
 
--in or --input_file defines the input file path. For example, '...\insight_testsuite\tests\test_features\log_input\log.txt'. The default is '...\log_input\log.txt'
--out or --output_folder defines the input file path. For example, '...\insight_testsuite\tests\test_features\log_output'. The default is '...\log_output'
--f or --features defines which features would the user like to run. For example, -f 1 3 will run features 1 and 3 only. The default is to run all features. 
--s or --save_pickle gives the user the option to save the data parsed from the input file into pickle file to enable quick reading when needed. The defult is False. The pickle file will be stored in '...\data_stored\'
--r or -- read_pickle gives the user the option to read from a pickle file already saved intead of parsing the entire log file for quick reading. The defult is False. The pickle file is assumed to be stored in '...\data_stored\'
+-in or --input_file defines the input file path. For example, '...\insight_testsuite\tests\test_features\log_input\log.txt'. The default is '...\log_input\log.txt'  
+-out or --output_folder defines the input file path. For example, '...\insight_testsuite\tests\test_features\log_output'. The default is '...\log_output'  
+-f or --features defines which features would the user like to run. For example, -f 1 3 will run features 1 and 3 only. The default is to run all features.   
+-s or --save_pickle gives the user the option to save the data parsed from the input file into pickle file to enable quick reading when needed. The defult is False. The pickle file will be stored in '...\data_stored\'  
+-r or -- read_pickle gives the user the option to read from a pickle file already saved intead of parsing the entire log file for quick reading. The defult is False. The pickle file is assumed to be stored in '...\data_stored\'  
 
 Here are some examples
 
