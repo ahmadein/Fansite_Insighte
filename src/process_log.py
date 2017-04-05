@@ -84,8 +84,9 @@ def main(argv):
     # ### feature 2
     print('starting feature 2\n')
     tot_bytes = defaultdict(int)
-    for k in range(len(unique_inverse)):
-        tot_bytes[unique_inverse[k]] += bytes_sent[k]
+    for key, value in index_dict.items():
+        b = [bytes_sent[i] for i in value]
+        tot_bytes[key]=sum(b)
     highest_bytes_to_print = 10   # find highest 10
     sorted_tot_bytes = sorted(tot_bytes.items(), key=operator.itemgetter(1), reverse=True)
     highest_bytes_host = []
