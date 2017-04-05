@@ -8,11 +8,13 @@ from pathlib import Path
 import sys
 import pickle
 
+
 def main(argv):
     read_from_file = sys.argv[1]
     features_to_run = sys.argv[2]
-    save_date = sys.argv[3]
-    print('read from file {:s} and features to run is {:s} and save data is {:s}\n'.format(read_from_file, features_to_run, save_date))
+    save_data = sys.argv[3]
+    print('read from file {:s} and features to run is {:s} and save data is {:s}\n'.format(
+        read_from_file, features_to_run, save_data))
     request = []
     host = []
     date_in_file = []
@@ -21,26 +23,43 @@ def main(argv):
     num_lines = 0
     parent_path = Path(__file__).parents[1]   # get the repo parent's path
     data_path = Path.joinpath(parent_path, 'data_stored/objs.pickle').__str__()
+    output_path = Path.joinpath(parent_path, 'log_output')
     if read_from_file == 'True':
         print('starting to read the file\n')
-        file_path = Path.joinpath(parent_path,'log_input/log.txt').__str__()
-        output_path = Path.joinpath(parent_path, 'log_output')
+        file_path = Path.joinpath(parent_path, 'log_input/log.txt').__str__()
+        formatting = r'(.*) - - \[(.*) -.*\] \"(.*)\" (\d+) (\d+|-)'
+        pattern = re.compile(formatting)
         with open(file_path, encoding="Latin-1") as f:
             for line in f:
-                new_param = line.split()
-                quotes = re.findall(r'"[^"]*"', line, re.U)
-                temp = quotes.__str__()
-                request.append(temp[3:-3])
-                host.append(new_param[0])
-                date_in_file.append(new_param[3][1:])
-                replycode.append(new_param[-2])
-                bytes_sent.append(new_param[-1])
-                num_lines = num_lines+1
+                match = pattern.search(line)  # using regex as it is cleaner and without hard coding
+                if match:
+                    host.append(match.group(1))
+                    date_in_file.append(match.group(2))
+                    request.append(match.group(3))
+                    replycode.append(match.group(4))
+                    bytes_sent.append(match.group(5))
+                    num_lines = num_lines + 1
+                else:
+                    print('found corrupted line {:s} \n'.format(line))
+                # new_param = line.split()
+                # quotes = re.findall(r'"[^"]*"', line, re.U)
+                # temp = quotes.__str__()
+                # request.append(temp[3:-3])
+                # host.append(new_param[0])
+                # date_in_file.append(new_param[3][1:])
+                # replycode.append(new_param[-2])
+                # bytes_sent.append(new_param[-1])
+
         print('finished reading the file\n')
     else:
-        with open(data_path, 'rb') as f:  # Python 3: open(..., 'rb')
-            host, date_in_file, request, replycode, bytes_sent = pickle.load(f)
-    if save_date == 'True':
+        try:
+            print('reading from stored data in {:s}'.format(data_path))
+            with open(data_path, 'rb') as f:  # Python 3: open(..., 'rb')
+                host, date_in_file, request, replycode, bytes_sent = pickle.load(f)
+        except:
+            print('error while opening file .. exiting')
+            return 1
+    if save_data == 'True':
         with open(data_path, 'wb') as f:  # Python 3: open(..., 'wb')
             pickle.dump([host, date_in_file, request, replycode, bytes_sent], f)
     # make a dictionary of indicies
