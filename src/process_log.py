@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 import pickle
 import argparse
-
+from collections import Counter
 
 class ChallengeInsight:
     def __init__(self, file_path, output_path):
@@ -22,6 +22,7 @@ class ChallengeInsight:
         self.unique_index = None
         self.unique_inverse = None
         self.occ = None
+        self.blocked = None
         self.parent_path = Path(__file__).parents[1]  # get the repo parent's path
         self.data_path = Path.joinpath(self.parent_path, 'data_stored/objs.pickle').__str__()
         self.file_path=file_path
@@ -166,6 +167,7 @@ class ChallengeInsight:
                 unique_index_to_print = set(index_to_print)
                 blocked_dict[key] = [list(value)[x] for x in unique_index_to_print]
         v = blocked_dict.values()
+        self.blocked = blocked_dict.keys()
         v_list = [item for sublist in v for item in sublist]
         file_path4 = Path.joinpath(self.output_path, 'blocked.txt').__str__()
         fileID = open(file_path4, 'w')
@@ -173,14 +175,33 @@ class ChallengeInsight:
             print('{:s} - - [{:s} -0400] "{:s}" {:d} {:d}\n'.format(
                 self.host[x], self.date_in_file[x], self.request[x], self.replycode[x], self.bytes_sent[x]), end='', file=fileID)
         fileID.close()
+
+
+
+    def do_feature5(self):
+        '''
+        bonus feature .. .find the hours of days for all blocked users access to monitor their traffic print out 
+        host, hour, number of access 
+        '''
+        print('starting feature 5\n')
+        blocked_hour_dic = defaultdict(list)
+        for key in self.blocked:
+            temp_hr_list = [int(self.date_in_file[i][12:14]) for i in self.index_dict[key]]
+            most_common, num_most_common = Counter(temp_hr_list).most_common(1)[0]
+            blocked_hour_dic[key] = [most_common, num_most_common]
+        file_path5 = Path.joinpath(self.output_path, 'blocked_hours.txt').__str__()
+        fileID = open(file_path5, 'w')
+        for key, value in blocked_hour_dic.items():
+            print('{:s}, {:d}, {:d} \n'.format(self.unique_host[key], value[0], value[1]), end='', file=fileID)
+            # print host , hours, number of occurances
+        fileID.close()
         print('end of features\n')
-        # bonus feature .. .find the hours of days for all blocked users access to monitor their traffic print out host, hour, number of access, total occ
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-in", "--input_file", metavar="FILE NAME", required=False)
-    parser.add_argument("-f", "--features", type=int, required=False, nargs='+', default=[1, 2, 3, 4], help="Enter list of features to run")
+    parser.add_argument("-f", "--features", type=int, required=False, nargs='+', default=[1, 2, 3, 4, 5], help="Enter list of features to run")
     parser.add_argument("-s", "--save_pickle", action='store_true', required=False, default=False,
                         help="Dump data to pickle file")
     parser.add_argument("-r", "--read_pickle", action='store_true', required=False, default=False,
@@ -192,7 +213,7 @@ def main():
     read_pickle = args.read_pickle
     features_to_run = args.features
     save_pickle = args.save_pickle
-    output_path=args.output_dir
+    output_path = args.output_dir
 
     solver = ChallengeInsight(file_path, output_path)
     print('read from file {:s} and features to run is {:s} and save data is {:s}\n'.format(
@@ -217,9 +238,15 @@ def main():
     if 3 in features_to_run:
         solver.do_feature3()
 
-    if 4 in features_to_run:
+    if 4 in features_to_run or 5 in features_to_run:
         solver.do_feature4()
 
+    if 5 in features_to_run:
+        solver.do_feature5()
+
+    return 0
+
+
 if __name__ == "__main__":
-   return_code = main()
-   sys.exit(return_code)
+    return_code = main()
+    sys.exit(return_code)

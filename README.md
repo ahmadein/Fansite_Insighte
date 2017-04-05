@@ -3,9 +3,9 @@
 2. [Details of Implementation](README.md#details-of-implementation)
 3. [List of Implemented Features ](README.md#list-features)
 4. [Getting Started](README.md#getting-started)
-5. [## Prerequisites](README.md#pre)
+5. [Prerequisites](README.md#pre)
 6. [Dependencies](README.md#dep)
-7. [IHow to Run](README.md#run)
+7. [How to Run](README.md#run)
 8. [Running the tests](README.md#testing)
 
 
@@ -39,13 +39,34 @@ List the top 10 busiest (or most frequently visited) 60-minute periods
 ### Feature 4: 
 Detect patterns of three failed login attempts from the same IP address over 20 seconds so that all further attempts to the site can be blocked for 5 minutes. Log those possible security breaches.
 
+### Feature 5: (Bonus Feature)
+The feature allows extra monitoring for the users who has been indentified to be blocked and it gives back the hours that they mostly accessed the sites and the number of times they accessed the time during that hour. Hence, an analyst can do more live monitoring on the website during those active times for the blocked users to determine if they are considered a security hazard or not. The feature depends on feature 4 and it can not be run alone without running feature 4 to determine the blocked users. The feature returns back a file called hours_blocked contains host, hours mostly active, number of activity during these hours as shown in the example
+
+```
+211.142.71.13, 6, 6 
+221.299.29.52, 11, 7 
+208.121.14.94, 18, 7 
+221.116.22.20, 4, 7 
+215.263.11.42, 3, 7 
+221.169.69.14, 20, 6 
+209.143.96.78, 7, 7 
+217.119.97.85, 3, 7 
+214.146.69.69, 6, 7 
+209.161.36.66, 2, 7 
+207.283.80.98, 20, 7 
+213.145.98.48, 7, 7 
+215.118.29.17, 7, 6 
+218.168.38.52, 18, 7 
+...
+```
+
 In addition, the code provides some flexability and additional advantages
 
-1- ABility to determine the input and output path
-2- Ability of quick reading from a previously parsed file saved in pickle
-3- Fast and quick reading using regex
-4- Fast and quick processing using classes and dictionaries while maintaining memory efficiency
-5- Ability to run subset of features
+1. ABility to determine the input and output path
+2. Ability of quick reading from a previously parsed file saved in pickle
+3. Fast and quick reading using regex
+4. Fast and quick processing using classes and dictionaries while maintaining memory efficiency
+5. Ability to run subset of features
 
 ## Getting Started
 
@@ -76,24 +97,31 @@ You can run the code by calling the code log_process inside the folder ...\src\.
 Here are all the possible arguments for the code
 
 ```
+-in or --input_file
+-out or --output_folder
+-f or --features 
+-s or --save_pickle 
+-r or -- read_pickle 
+```
+
 -in or --input_file defines the input file path. For example, '...\insight_testsuite\tests\test_features\log_input\log.txt'. The default is '...\log_input\log.txt'
 -out or --output_folder defines the input file path. For example, '...\insight_testsuite\tests\test_features\log_output'. The default is '...\log_output'
 -f or --features defines which features would the user like to run. For example, -f 1 3 will run features 1 and 3 only. The default is to run all features. 
 -s or --save_pickle gives the user the option to save the data parsed from the input file into pickle file to enable quick reading when needed. The defult is False. The pickle file will be stored in '...\data_stored\'
 -r or -- read_pickle gives the user the option to read from a pickle file already saved intead of parsing the entire log file for quick reading. The defult is False. The pickle file is assumed to be stored in '...\data_stored\'
-```
+
 Here are some examples
 
 ```
-python process_log.py .. everything is in default .. read from log in log_input and out in log_output while running all features. No pickle saving nor loading
-python process_log.py -f [1 2 4] will run only features 1, 2 and 4
-pyhon process_log.py -r will not parse the log file but read the variables host, time, request, reply code and bytes directly from a pickle file
+python process_log.py # everything is in default .. read from log in log_input and out in log_output while running all features. No pickle saving nor loading
+python process_log.py -f [1 2 4] # will run only features 1, 2 and 4
+pyhon process_log.py -r # will not parse the log file but read the variables host, time, request, reply code and bytes directly from a pickle file
 ```
 
 ## Running the tests
 
 All tests exist in the run_tests.sh inside ...\insight_testsuite. Additional test cases can be added such as
-1- handling empty files
-2- handling corrupted files
-3- Duplicated Entries
-4- Non existing pickle file
+1. handling empty files
+2. handling corrupted files
+3. Duplicated Entries
+4. Non existing pickle file
