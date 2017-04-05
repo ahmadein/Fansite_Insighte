@@ -100,10 +100,15 @@ class ChallengeInsight:
         # ### feature 2
         print('starting feature 2\n')
         tot_bytes = defaultdict(float)
+        num_access = defaultdict(int)
+        bw = defaultdict(float)
         for k in range(len(self.request)):
             tot_bytes[self.request[k]] += self.bytes_sent[k]
-        highest_bytes_to_print = min(len(tot_bytes),10)   # find highest 10
-        sorted_tot_bytes_keys = sorted(tot_bytes.items(), key=operator.itemgetter(1), reverse=True)
+            num_access[self.request[k]] += 1
+        for key, value in tot_bytes.items():
+            bw[key] = value/num_access[key]
+        highest_bytes_to_print = min(len(bw),10)   # find highest 10
+        sorted_tot_bytes_keys = sorted(bw.items(), key=operator.itemgetter(1), reverse=True)
         file_path2 = Path.joinpath(self.output_path, 'resources.txt').__str__()
         thefile = open(file_path2, 'w')
         highest_bytes_request = []
