@@ -103,7 +103,7 @@ class ChallengeInsight:
         for key, value in self.index_dict.items():
             b = [self.bytes_sent[i] for i in value]
             tot_bytes[key]=sum(b)
-        highest_bytes_to_print = min(len(self.unique_host),10)   # find highest 10
+        highest_bytes_to_print = 10   # find highest 10
         sorted_tot_bytes = sorted(tot_bytes.items(), key=operator.itemgetter(1), reverse=True)
         highest_bytes_host = []
         for k in range(highest_bytes_to_print):
@@ -125,7 +125,6 @@ class ChallengeInsight:
         for k in range(len(self.date_in_file)):
             hour_dict[self.date_in_file[k][0:-6]] += 1
         sorted_hour_dec = sorted(hour_dict.items(), key=operator.itemgetter(1), reverse=True)
-        highest_periods_to_print = min(len(sorted_hour_dec),10)
         for k in range(highest_periods_to_print):
             busiest_period.append(sorted_hour_dec[k][0] + ":00:00 -0400")
             occ_period.append(sorted_hour_dec[k][1])
