@@ -99,19 +99,17 @@ class ChallengeInsight:
     def do_feature2(self):
         # ### feature 2
         print('starting feature 2\n')
-        tot_bytes = defaultdict(int)
-        for key, value in self.index_dict.items():
-            b = [self.bytes_sent[i] for i in value]
-            tot_bytes[key]=sum(b)
-        highest_bytes_to_print = min(len(self.unique_host),10)   # find highest 10
-        sorted_tot_bytes = sorted(tot_bytes.items(), key=operator.itemgetter(1), reverse=True)
-        highest_bytes_host = []
-        for k in range(highest_bytes_to_print):
-            highest_bytes_host.append(self.unique_host[sorted_tot_bytes[k][0]])
+        tot_bytes = defaultdict(float)
+        for k in range(len(self.request)):
+            tot_bytes[self.request[k]] += self.bytes_sent[k]
+        highest_bytes_to_print = min(len(tot_bytes),10)   # find highest 10
+        sorted_tot_bytes_keys = sorted(tot_bytes.items(), key=operator.itemgetter(1), reverse=True)
         file_path2 = Path.joinpath(self.output_path, 'resources.txt').__str__()
         thefile = open(file_path2, 'w')
-        for item in highest_bytes_host:
-            thefile.write("%s\n" % item)
+        highest_bytes_request = []
+        for k in range(highest_bytes_to_print):
+            s = sorted_tot_bytes_keys[k][0]
+            thefile.write("%s\n" % s[4:])
         thefile.close()
 
     def do_feature3(self):
