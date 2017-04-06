@@ -3,6 +3,7 @@ from datetime import datetime
 import operator
 import re
 from collections import defaultdict
+from collections import OrderedDict
 import numpy as np
 from pathlib import Path
 import sys
@@ -100,8 +101,8 @@ class ChallengeInsight:
         self.bytes_sent = list(map(int, self.bytes_sent))  # change bytes to int
         self.bytes_sent = np.asarray(self.bytes_sent)
 
-        if 3 in feature_to_run:
-            self.date_datetime = [datetime.strptime(ll, '%d/%b/%Y:%H:%M:%S') for ll in self.date_in_file]
+        # if 3 in feature_to_run:
+        #    self.date_datetime = [datetime.strptime(ll, '%d/%b/%Y:%H:%M:%S') for ll in self.date_in_file]
 
     def do_feature1(self):
         # ### feature 1
@@ -156,6 +157,16 @@ class ChallengeInsight:
         with open(file_path3, "w") as f:
             f.writelines(map("{},{}\n".format, busiest_period, occ_period))
         f.close()
+
+        def do_try_feature3(self):
+            hour_dict = OrderDict()
+            for items in self.date_in_file:
+                hour_dict[items] = 0
+            for items in self.date_in_file:
+                hour_dict[items] += 1
+
+
+
 
     # def do_feature3(self):
     #     # ## Feature 3
