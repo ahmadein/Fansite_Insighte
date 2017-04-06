@@ -18,6 +18,7 @@ class ChallengeInsight:
         self.date_in_file = []
         self.bytes_sent = []
         self.replycode = []
+        self.date_datetime = None
         self.index_dict = defaultdict(list)
         self.unique_host = None
         self.unique_index = None
@@ -85,7 +86,7 @@ class ChallengeInsight:
                     # bytes_sent.append(new_param[-1])
         print('finished reading the file\n')
 
-    def preprocess(self):
+    def preprocess(self, feature_to_run):
         """
                 make a dictionary of indices and unique and occurrences of host
         """
@@ -95,14 +96,17 @@ class ChallengeInsight:
                                                                                        return_inverse=True)
         for k in range(len(self.unique_inverse)):
             self.index_dict[self.unique_inverse[k]].append(k)  # dict of each host and the line index it happened at
-        #bytes_sent = [w.replace('-', '0') for w in bytes_sent]
+        # bytes_sent = [w.replace('-', '0') for w in bytes_sent]
         self.bytes_sent = list(map(int, self.bytes_sent))  # change bytes to int
         self.bytes_sent = np.asarray(self.bytes_sent)
+
+        if 3 in feature_to_run:
+            self.date_datetime = [datetime.strptime(ll, '%d/%b/%Y:%H:%M:%S') for ll in self.date_in_file]
 
     def do_feature1(self):
         # ### feature 1
         print('starting feature 1\n')
-        sort_occ = sorted(self.occ, reverse=True) # sort number of occurances
+        sort_occ = sorted(self.occ, reverse=True)  # sort number of occurances
         index = sorted(range(len(self.occ)), reverse=True, key=lambda z: self.occ[z])
         file_path1 = Path.joinpath(self.output_path, 'hosts.txt').__str__()
         with open(file_path1, "w") as f:  # print
@@ -122,7 +126,7 @@ class ChallengeInsight:
         file_path2 = Path.joinpath(self.output_path, 'resources.txt').__str__()
         thefile = open(file_path2, 'w')
         formatting = r'(/.*) '
-        formatting1= r'(/.*)'
+        formatting1 = r'(/.*)'
         pattern = re.compile(formatting)  # sometimes request does not have any HTTP after so either format or format1
         pattern1 = re.compile(formatting1)
         for k in range(highest_bytes_to_print):
@@ -134,25 +138,24 @@ class ChallengeInsight:
         thefile.close()
 
     def do_feature3(self):
-         """
-         find busiest hour period .. use dictionary for day and hours
-         """
-         print('starting feature 3\n')
-         hour_dict = defaultdict(int)
-         highest_periods_to_print = 10
-         busiest_period = []
-         occ_period = []
-         for k in range(len(self.date_in_file)):
-             hour_dict[self.date_in_file[k][0:-6]] += 1
-         sorted_hour_dec = sorted(hour_dict.items(), key=operator.itemgetter(1), reverse=True)
-         highest_periods_to_print = min(len(sorted_hour_dec), 10)
-         for k in range(highest_periods_to_print):
-             busiest_period.append(sorted_hour_dec[k][0] + ":00:00 -0400")
-             occ_period.append(sorted_hour_dec[k][1])
-         file_path3 = Path.joinpath(self.output_path, 'hours.txt').__str__()
-         with open(file_path3, "w") as f:
-             f.writelines(map("{},{}\n".format, busiest_period, occ_period))
-         f.close()
+        """
+        find busiest hour period .. use dictionary for day and hours
+        """
+        print('starting feature 3\n')
+        hour_dict = defaultdict(int)
+        busiest_period = []
+        occ_period = []
+        for k in range(len(self.date_in_file)):
+            hour_dict[self.date_in_file[k][0:-6]] += 1
+        sorted_hour_dec = sorted(hour_dict.items(), key=operator.itemgetter(1), reverse=True)
+        highest_periods_to_print = min(len(sorted_hour_dec), 10)
+        for k in range(highest_periods_to_print):
+            busiest_period.append(sorted_hour_dec[k][0] + ":00:00 -0400")
+            occ_period.append(sorted_hour_dec[k][1])
+        file_path3 = Path.joinpath(self.output_path, 'hours.txt').__str__()
+        with open(file_path3, "w") as f:
+            f.writelines(map("{},{}\n".format, busiest_period, occ_period))
+        f.close()
 
     # def do_feature3(self):
     #     # ## Feature 3
@@ -180,23 +183,24 @@ class ChallengeInsight:
         """
         print('starting feature 4\n')
         blocked_dict = defaultdict(list)
-        pat = [401, 401, 401] # the pattern of three consecutive failures
-        l = []
+        pat = [401, 401, 401]  # the pattern of three consecutive failures
         for key, value in self.index_dict.items():
             l = [self.replycode[i] for i in value]
             # temp_a = []
-            temp_a = [i for i, x in enumerate(l) if (l[i:i + len(pat)] == pat)] # find who has 3 consecutive failures
+            temp_a = [i for i, x in enumerate(l) if (l[i:i + len(pat)] == pat)]  # find who has 3 consecutive failures
             if temp_a:
                 t = [self.date_in_file[i] for i in value]
                 t_format = [datetime.strptime(ll, '%d/%b/%Y:%H:%M:%S') for ll in t]
                 index_to_print = []
                 for x in temp_a:
-                    time_diff = (t_format[x + 2] - t_format[x]).total_seconds() # among those with 3 find if they are within 20 sec
+                    time_diff = (t_format[x + 2] - t_format[x]).total_seconds()
+                    # among those with 3 find if they are within 20 sec
                     if time_diff <= 20:
                         all_time_diff = [(ll - t_format[x + 2]).total_seconds() for ll in t_format]
                         find_index_to_print = [i for i, x in enumerate(all_time_diff) if 0 < x <= 5 * 60]
                         index_to_print.extend(find_index_to_print)   # get all their events for the next 5 minutes
-                unique_index_to_print = set(index_to_print) # get the unique list of events in case more than 3 consecutive failures
+                        # get the unique list of events in case more than 3 consecutive failures
+                unique_index_to_print = set(index_to_print)
                 blocked_dict[key] = [list(value)[x] for x in unique_index_to_print]
         v = blocked_dict.values()
         self.blocked = blocked_dict.keys()
@@ -211,13 +215,14 @@ class ChallengeInsight:
 
     def do_feature5(self):
         """
-        bonus feature .. .find the hours of days for all blocked users access to monitor their traffic print out host, hour, number of access 
+        bonus feature .. .find the hours of days for all blocked users access to monitor their traffic 
+        print out host, hour, number of access 
         """
         print('starting feature 5\n')
         blocked_hour_dic = defaultdict(list)
         for key in self.blocked:  # find the hours for blocked users
             temp_hr_list = [int(self.date_in_file[i][12:14]) for i in self.index_dict[key]]
-            most_common, num_most_common = Counter(temp_hr_list).most_common(1)[0] # find most common hour per user
+            most_common, num_most_common = Counter(temp_hr_list).most_common(1)[0]  # find most common hour per user
             blocked_hour_dic[key] = [most_common, num_most_common]
         file_path5 = Path.joinpath(self.output_path, 'blocked_hours.txt').__str__()
         fileID = open(file_path5, 'w')
@@ -249,8 +254,8 @@ def main():
 
     solver = ChallengeInsight(file_path, output_path)  # initiate class
     print('read from file {:s},\n output path is {:s}\n, features to run is {:s}, \n'
-          'save data to pickle is {:s} and read from pickle is {:s}\n'.format(solver.file_path, str(solver.output_path), str(features_to_run),
-                                                                                   str(save_pickle), str(read_pickle)))
+          'save data to pickle is {:s} and read from pickle is {:s}\n'.format(solver.file_path, str(solver.output_path),
+                                                            str(features_to_run), str(save_pickle), str(read_pickle)))
 
     if read_pickle:
         solver.read_pickle()   # read from pickle file if specified
@@ -260,7 +265,7 @@ def main():
     if save_pickle:
         solver.save_pickle()   # save in pickle file
 
-    solver.preprocess()
+    solver.preprocess(features_to_run)
 
     if 1 in features_to_run:
         solver.do_feature1()
@@ -271,7 +276,7 @@ def main():
     if 3 in features_to_run:
         solver.do_feature3()
 
-    if 4 in features_to_run or 5 in features_to_run: # feature 4 is mandatory to run if feature 5 was to run alone
+    if 4 in features_to_run or 5 in features_to_run:  # feature 4 is mandatory to run if feature 5 was to run alone
         solver.do_feature4()
 
     if 5 in features_to_run:
